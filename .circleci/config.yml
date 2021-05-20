@@ -115,7 +115,7 @@ workflows:
 
   "Build and Test":
     jobs:
-      - build-alpine:
+      - build-alpine
       - review:
           requires:
             - build-alpine
