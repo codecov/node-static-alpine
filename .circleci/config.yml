@@ -56,9 +56,11 @@ jobs:
       - run:
           name: Calculate sums
           command: |
-            mkdir sums
+            mkdir dist
+            cp out/Release/node dist/node
+            cd dist
             apk add coreutils
-            for i in 1 256 512; do "sha${i}sum" out/Release/node > "sums/SHA${i}SUM"; done
+            for i in 1 256 512; do "sha${i}sum" node > "dist/SHA${i}SUM"; done
           working_directory: node
 
       # Persist the specified paths (workspace/echo-output) into the workspace for use in downstream job.
@@ -68,8 +70,7 @@ jobs:
           root: .
           # Must be relative path from root
           paths:
-            - node/out/Release/node
-            - node/sums
+            - node/dist
 
   review:
     docker:
@@ -78,9 +79,7 @@ jobs:
       - attach_workspace:
           at: .
       - store_artifacts:
-          path: node/out/Release/node
-      - store_artifacts:
-          path: node/sums
+          path: node/dist
 
 # TODO: add test runs for each binary outside of a git project
 
@@ -100,16 +99,17 @@ jobs:
       - run:
           name: Make binaries executable
           command: |
-            chmod +x out/*
+            chmod +x node/dist/*
       - run:
           name: Package
           command: >
-            RELEASE_TAG=v$(cat package.json | jq --raw-output
-            .version)_$CIRCLE_BUILD_NUM
+            RELEASE_TAG=node.v14.16.1_$GITHUB_SHA
 
             echo $RELEASE_TAG
+            ls out/node
+            ls sums
 
-            ./ghr -u codecov -r uploader --replace $RELEASE_TAG out
+            ./ghr -u codecov -r uploader --replace $RELEASE_TAG node/dist
 
 workflows:
   version: 2
@@ -120,9 +120,9 @@ workflows:
       - review:
           requires:
             - build-alpine
-#      - deploy:
-#          requires:
-#            - review
-#          filters:
-#            branches:
-#              only: master
+      - deploy:
+          requires:
+            - review
+          filters:
+            branches:
+              only: master
