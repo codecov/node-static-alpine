@@ -58,7 +58,7 @@ jobs:
           command: |
             mkdir sums
             apk add coreutils
-            for i in 1 256 512; do shasum -a "${i}" out/Release/node > "sums/SHA${i}SUM"; done
+            for i in 1 256 512; do "sha${i}sum" -a "${i}" out/Release/node > "sums/SHA${i}SUM"; done
           working_directory: node
 
       # Persist the specified paths (workspace/echo-output) into the workspace for use in downstream job.
