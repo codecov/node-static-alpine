@@ -103,13 +103,13 @@ jobs:
       - run:
           name: Package
           command: >
-            RELEASE_TAG=node.v14.16.1_$GITHUB_SHA
+            RELEASE_TAG=node.v14.16.1_$CIRCLE_SHA1
 
             echo $RELEASE_TAG
             ls out/node
             ls sums
 
-            ./ghr -u codecov -r uploader --replace $RELEASE_TAG node/dist
+            ./ghr -u codecov -r node-static-alpine --replace $RELEASE_TAG node/dist
 
 workflows:
   version: 2
