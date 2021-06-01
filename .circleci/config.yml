@@ -29,11 +29,11 @@ jobs:
           command: |
             git clone https://github.com/nodejs/node.git
       - run:
-          name: Checkout v14.16.1 tag and apply patches
+          name: Checkout v16.2.0 tag and apply patches
           command: |
             git fetch --all --tags
-            git checkout tags/v14.16.1 -b build
-            patch -p1 -i ../patches/node.v14.16.1.cpp.patch
+            git checkout tags/v16.2.0 -b build
+            patch -p1 -i ../patches/node.v16.2.0.cpp.patch
           working_directory: node
 
       - run:
@@ -103,7 +103,7 @@ jobs:
       - run:
           name: Package
           command: >
-            RELEASE_TAG=node.v14.16.1_$CIRCLE_SHA1
+            RELEASE_TAG=node.v16.2.0_$CIRCLE_SHA1
 
             echo $RELEASE_TAG
             ls out/node
